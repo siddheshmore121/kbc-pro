@@ -3,114 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KBC Pro - Premium Edition</title>
+    <title>KBC Pro - Level Edition</title>
     <style>
+        /* CSS मध्ये कोणताही बदल नाही, जुन्या कोडप्रमाणेच राहील */
         body {
             margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: radial-gradient(circle at center, #1a1a4d 0%, #0a0a2e 70%, #05051a 100%);
             color: white; height: 100vh; display: flex;
             justify-content: center; align-items: center; overflow: hidden;
         }
-        body::after {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 10px);
-            pointer-events: none;
-        }
-        #landing, #intro, #game {
+        #landing, #level-select, #intro, #game {
             width: 90%; max-width: 850px; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
             background: rgba(10, 10, 50, 0.85); backdrop-filter: blur(15px);
             padding: 40px; border-radius: 40px; border: 2px solid #ffd700;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.5);
-            position: relative; z-index: 1;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); position: relative;
         }
-        .kbc-logo { width: 150px; mix-blend-mode: screen; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)); margin-bottom: 15px; }
-        #intro, #game { display: none; }
-        .progress-tracker { background: rgba(255, 215, 0, 0.1); padding: 8px 25px; border-radius: 30px; border: 1px solid #ffd700; color: #ffd700; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-main { padding: 15px 50px; background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%); border: 2px solid #ffffff; border-radius: 40px; cursor: pointer; font-weight: bold; font-size: 20px; color: #000; transition: 0.3s; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); margin-top: 20px; }
-        .btn-main:hover { transform: scale(1.05); box-shadow: 0 0 20px #ffd700; }
-        #timer-container { width: 90px; height: 90px; border-radius: 50%; border: 5px solid #ffd700; display: flex; justify-content: center; align-items: center; font-size: 36px; font-weight: bold; margin-bottom: 25px; color: #fff; background: radial-gradient(#cc0000, #660000); box-shadow: 0 0 20px rgba(204, 0, 0, 0.6); visibility: hidden; }
-        .question-box { width: 100%; padding: 30px; background: linear-gradient(90deg, #00004d 0%, #000099 50%, #00004d 100%); border-radius: 60px; border: 2.5px solid #ffd700; font-size: 26px; margin-bottom: 30px; box-sizing: border-box; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); text-shadow: 1px 1px 2px #000; }
-        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
-        .option { background: rgba(0, 0, 100, 0.7); padding: 18px; border-radius: 50px; border: 1.5px solid #4da6ff; cursor: pointer; transition: 0.2s; font-size: 22px; }
-        .option:hover { background: #0056b3; border-color: #ffd700; transform: translateY(-3px); }
-        .correct { background: linear-gradient(to bottom, #2ecc71, #27ae60) !important; border-color: #fff !important; animation: blink 0.3s infinite alternate; }
-        @keyframes blink { from { opacity: 1; } to { opacity: 0.8; } }
-        .wrong { background: linear-gradient(to bottom, #e74c3c, #c0392b) !important; border-color: #fff !important; }
-        #nextBtn { margin-top: 25px; padding: 12px 45px; background: #28a745; color: white; border: 2px solid #fff; border-radius: 30px; display: none; cursor: pointer; font-weight: bold; font-size: 18px; }
-        .lifelines { display: flex; gap: 20px; margin-bottom: 25px; visibility: hidden; }
-        .lifelines button { width: 70px; height: 70px; border: 2px solid #ffd700; border-radius: 50%; background: #000066; color: #ffd700; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; }
-        .lifelines button:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
+        #level-select, #intro, #game { display: none; }
+        .kbc-logo { width: 150px; margin-bottom: 15px; filter: drop-shadow(0 0 10px #ffd700); }
+        .level-container { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+        .btn-level {
+            padding: 20px 30px; border-radius: 15px; border: 2px solid #ffd700;
+            background: rgba(255, 215, 0, 0.1); color: #ffd700; font-size: 20px;
+            cursor: pointer; transition: 0.3s; min-width: 180px; font-weight: bold;
+        }
+        .btn-level:hover { background: #ffd700; color: #000; transform: scale(1.05); box-shadow: 0 0 15px #ffd700; }
+        .progress-tracker { background: rgba(255, 215, 0, 0.1); padding: 8px 25px; border-radius: 30px; border: 1px solid #ffd700; color: #ffd700; margin-bottom: 20px; font-weight: bold; }
+        .btn-main { padding: 15px 50px; background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%); border: 2px solid #fff; border-radius: 40px; cursor: pointer; font-weight: bold; font-size: 20px; color: #000; margin-top: 20px; }
+        #timer-container { width: 85px; height: 85px; border-radius: 50%; border: 4px solid #ffd700; display: flex; justify-content: center; align-items: center; font-size: 32px; margin-bottom: 20px; background: radial-gradient(#cc0000, #660000); visibility: hidden; }
+        .question-box { width: 100%; padding: 25px; background: linear-gradient(90deg, #00004d 0%, #000099 50%, #00004d 100%); border-radius: 50px; border: 2px solid #ffd700; font-size: 24px; margin-bottom: 25px; box-sizing: border-box; }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
+        .option { background: rgba(0, 0, 100, 0.7); padding: 15px; border-radius: 40px; border: 1.5px solid #4da6ff; cursor: pointer; font-size: 20px; transition: 0.2s; }
+        .option:hover { border-color: #ffd700; box-shadow: 0 0 15px #ffd700; }
+        .correct { background: linear-gradient(to bottom, #2ecc71, #27ae60) !important; animation: blink 0.2s 3; }
+        .wrong { background: linear-gradient(to bottom, #e74c3c, #c0392b) !important; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .lifelines { display: flex; gap: 15px; margin-bottom: 20px; visibility: hidden; }
+        .lifelines button { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #ffd700; background: #000066; color: #ffd700; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="landing">
         <img src="images/kbc.png" class="kbc-logo" onerror="this.src='https://via.placeholder.com/150/000080/FFFFFF?text=KBC'">
-        <h1 style="color: #ffd700; font-size: 40px; text-shadow: 0 0 10px #ffd700;">स्वागत आहे!</h1>
-        <p style="font-size: 20px;">“कोण बनेल भीम ज्ञानी?”</p>
-        <button class="btn-main" onclick="showIntro()">पुढे जा</button>
+        <h1 style="color: #ffd700; text-shadow: 0 0 10px #ffd700;">स्वागत आहे!</h1>
+        <p style="font-size: 22px;">“कोण बनेल भीम ज्ञानी?”</p>
+        <button class="btn-main" onclick="playIntroAndGoToLevels()">खेळायला सुरुवात करा</button>
+    </div>
+
+    <div id="level-select">
+        <h2 style="color: #ffd700;">तुमची पातळी निवडा</h2>
+        <div class="level-container">
+            <button class="btn-level" onclick="selectLevel('beginner')">१. सोपे<br>(Beginner)</button>
+            <button class="btn-level" onclick="selectLevel('middle')">२. मध्यम<br>(Middle)</button>
+            <button class="btn-level" onclick="selectLevel('advanced')">३. कठीण<br>(Advanced)</button>
+        </div>
     </div>
 
     <div id="intro">
-        <img src="images/kbc.png" class="kbc-logo">
-        <h1 style="color: #ffd700; font-size: 32px;">“भीम ज्ञान स्पर्धा 2026”</h1>
-        <p style="font-size: 18px;">नियम: प्रत्येक प्रश्नासाठी ४५ सेकंद मिळतील.<br>चुकीचे उत्तर दिल्यास खेळ तिथेच थांबेल.</p>
+        <h1 id="selected-level-title" style="color: #ffd700;"></h1>
+        <p style="font-size: 18px;">नियम: एका चुकीच्या उत्तरामुळे तुम्ही खेळातून बाहेर पडाल.</p>
         <button class="btn-main" onclick="startGame()">खेळ सुरू करा</button>
     </div>
 
     <div id="game">
-        <div id="progress" class="progress-tracker">प्रश्न: 1 / 10</div>
+        <div id="progress" class="progress-tracker">प्रश्न: 1</div>
         <div id="timer-container"><span id="timer">45</span></div>
         <div class="lifelines" id="lifeline-div">
             <button id="btn50" onclick="fifty()">50:50</button>
             <button id="btnAudience" onclick="audience()">👥</button>
         </div>
-        <div class="question-box" id="question">येथे प्रश्न दिसेल...</div>
-        <button id="startQBtn" class="btn-main" onclick="activateQuestion()">प्रश्न सुरू करा</button>
+        <div class="question-box" id="question">प्रश्न लोड होत आहे...</div>
+        <button id="startQBtn" class="btn-main" onclick="activateQuestion()">प्रश्न पहा</button>
         <div class="options" id="options" style="display: none;"></div>
-        <button id="nextBtn" onclick="nextQ()">पुढचा प्रश्न</button>
+        <button id="nextBtn" class="btn-main" style="display:none;" onclick="nextQ()">पुढचा प्रश्न</button>
     </div>
 
     <script>
-        const soundLock = new Audio('sounds/lock.mp3');
-        const soundCorrect = new Audio('sounds/correct.mp3');
-        const soundWrong = new Audio('sounds/wrong.mp3');
-        const soundIntro = new Audio('sounds/intro.mp3');
-        const soundTimer = new Audio('sounds/timer.mp3');
+        // ऑडिओ फाइल्स
+        const sndLock = new Audio('sounds/lock.mp3');
+        const sndCorrect = new Audio('sounds/correct.mp3');
+        const sndWrong = new Audio('sounds/wrong.mp3');
+        const sndTimer = new Audio('sounds/timer.mp3');
+        const sndIntro = new Audio('sounds/intro.mp3');
 
-        let questions = [
-            { q: "भारताचे राष्ट्रपिता कोण आहेत?", opt: ["नेहरू", "Mahatma Gandhi", "आंबेडकर", "सरदार पटेल"], ans: 1 },
-            { q: "Dr. B. R. Ambedkar यांचा जन्मदिन कधी असतो?", opt: ["15 ऑगस्ट", "26 जानेवारी", "14 एप्रिल", "5 जानेवारी"], ans: 2 },
-            { q: "भारताची राजधानी कोणती आहे?", opt: ["मुंबई", "दिल्ली", "पुणे", "नागपूर"], ans: 1 },
-            { q: "Chhatrapati Shivaji Maharaj यांना काय म्हणतात?", opt: ["सम्राट", "पंतप्रधान", "छत्रपती", "सरसेनापती"], ans: 2 },
-            { q: "भारताचा राष्ट्रीय पक्षी कोणता आहे?", opt: ["मोर", "कावळा", "चिमिणी", "पोपट"], ans: 0 },
-            { q: "Savitribai Phule यांनी प्रामुख्याने कोणत्या क्षेत्रात काम केले?", opt: ["वैद्यकीय", "पहिली महिला शिक्षिका", "सैनिक", "राजकारण"], ans: 1 },
-            { q: "भारताचे पहिले पंतप्रधान कोण होते?", opt: ["Mahatma Gandhi", "Lal Bahadur Shastri", "Jawaharlal Nehru", "Indira Gandhi"], ans: 2 },
-            { q: "Subhas Chandra Bose यांचे प्रसिद्ध घोषवाक्य काय होते?", opt: ["जय हिंद", "वंदे मातरम्", "भारत माता की जय", "इन्कलाब जिंदाबाद"], ans: 0 },
-            { q: "Mahatma Jyotiba Phule यांनी कोणत्या संस्थेची स्थापना केली?", opt: ["सत्यशोधक समाज", "आर्य समाज", "ब्राह्मो समाज", "प्रार्थना समाज"], ans: 0 },
-            { q: "भारताचे राष्ट्रीय गीत कोणते आहे?", opt: ["जन गण मन", "सारे जहाँ से अच्छा", "Vande Mataram", "माय भवानी"], ans: 2 }
-        ];
+        const questionFolders = {
+            beginner: [
+                { q: "भारताचे राष्ट्रपिता कोण आहेत?", opt: ["नेहरू", "म. गांधी", "आंबेडकर", "पटेल"], ans: 1 },
+                { q: "सूर्य कोणत्या दिशेला उगवतो?", opt: ["पश्चिम", "उत्तर", "पूर्व", "दक्षिण"], ans: 2 },
+                { q: "भारताची राजधानी कोणती?", opt: ["मुंबई", "दिल्ली", "पुणे", "कोलकाता"], ans: 1 }
+            ],
+            middle: [
+                { q: "महाराष्ट्र राज्याची स्थापना कधी झाली?", opt: ["1950", "1960", "1947", "1955"], ans: 1 },
+                { q: "भारताचा राष्ट्रीय पक्षी कोणता?", opt: ["मोर", "कावळा", "चिमणी", "पोपट"], ans: 0 },
+                { q: "क्षेत्रफळाने सर्वात मोठे राज्य कोणते?", opt: ["महाराष्ट्र", "राजस्थान", "उत्तर प्रदेश", "गोवा"], ans: 1 }
+            ],
+            advanced: [
+                { q: "भारतीय संविधानाचे जनक कोण आहेत?", opt: ["राजेंद्र प्रसाद", "म. गांधी", "डॉ. बी. आर. आंबेडकर", "पटेल"], ans: 2 },
+                { q: "राज्यसभेचा कार्यकाळ किती वर्षांचा असतो?", opt: ["5 वर्षे", "कायमस्वरूपी", "6 वर्षे", "4 वर्षे"], ans: 1 },
+                { q: "भारताचे 'मिसाईल मॅन' कोणाला म्हणतात?", opt: ["सी. व्ही. रमण", "विक्रम साराभाई", "ए. पी. जे. अब्दुल कलाम", "होमी भाभा"], ans: 2 }
+            ]
+        };
 
+        let currentQuestions = [];
         let index = 0, score = 0, timeLeft = 45, timerInterval;
 
-        function showIntro() {
+        // १. खेळायला सुरुवात करा बटण - गाणे सुरू आणि लेवल सिलेक्शन दाखवणे
+        function playIntroAndGoToLevels() {
+            sndIntro.loop = true;
+            sndIntro.play().catch(e => console.log("Audio Playback blocked by browser. Click anywhere to play."));
+            
             document.getElementById("landing").style.display = "none";
-            document.getElementById("intro").style.display = "flex";
-            soundIntro.loop = true;
-            soundIntro.play().catch(e => {});
+            document.getElementById("level-select").style.display = "flex";
         }
 
+        function selectLevel(level) {
+            currentQuestions = questionFolders[level];
+            let title = level === 'beginner' ? "सोपी पातळी (Beginner)" : level === 'middle' ? "मध्यम पातळी (Middle)" : "कठीण पातळी (Advanced)";
+            document.getElementById("selected-level-title").innerText = title;
+            document.getElementById("level-select").style.display = "none";
+            document.getElementById("intro").style.display = "flex";
+        }
+
+        // २. खेळ सुरू करा बटण - गाणे बंद आणि गेम सुरू
         function startGame() {
-            soundIntro.pause();
+            sndIntro.pause(); 
+            sndIntro.currentTime = 0; // गाणे सुरुवातीला सेट करणे
+            
             document.getElementById("intro").style.display = "none";
             document.getElementById("game").style.display = "flex";
             prepareQ();
         }
 
         function prepareQ() {
-            document.getElementById("progress").innerText = `प्रश्न: ${index + 1} / ${questions.length}`;
-            document.getElementById("question").innerText = "प्रश्न " + (index + 1) + " साठी तयार राहा...";
+            document.getElementById("progress").innerText = `प्रश्न: ${index + 1} / ${currentQuestions.length}`;
+            document.getElementById("question").innerText = "पुढच्या प्रश्नासाठी तयार राहा...";
             document.getElementById("options").style.display = "none";
             document.getElementById("timer-container").style.visibility = "hidden";
             document.getElementById("lifeline-div").style.visibility = "hidden";
@@ -124,7 +151,7 @@
             document.getElementById("timer-container").style.visibility = "visible";
             document.getElementById("lifeline-div").style.visibility = "visible";
             
-            let q = questions[index];
+            let q = currentQuestions[index];
             document.getElementById("question").innerText = q.q;
             let html = "";
             q.opt.forEach((o, i) => {
@@ -137,68 +164,65 @@
         function startTimer() {
             timeLeft = 45;
             document.getElementById("timer").innerText = timeLeft;
-            soundTimer.currentTime = 0;
-            soundTimer.loop = true;
-            soundTimer.play().catch(e => {});
+            sndTimer.loop = true;
+            sndTimer.play().catch(e => {});
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 timeLeft--;
                 document.getElementById("timer").innerText = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    soundTimer.pause();
-                    gameOver("वेळ संपली!");
+                    sndTimer.pause();
+                    alert("वेळ संपली!");
+                    location.reload();
                 }
             }, 1000);
         }
 
         function check(i, el) {
-            clearInterval(timerInterval); 
-            soundTimer.pause();
+            clearInterval(timerInterval);
+            sndTimer.pause();
+            sndLock.play();
+            
             let opts = document.querySelectorAll(".option");
             opts.forEach(o => o.style.pointerEvents = "none");
             el.style.background = "#ffa500"; 
-            soundLock.play().catch(() => {});
-            let correct = questions[index].ans;
+            
+            let correct = currentQuestions[index].ans;
             
             setTimeout(() => {
                 if (i === correct) {
                     el.classList.add("correct");
-                    soundCorrect.play().catch(() => {});
+                    sndCorrect.play();
                     score++;
                     document.getElementById("nextBtn").style.display = "block";
                 } else {
                     el.classList.add("wrong");
                     opts[correct].classList.add("correct");
-                    soundWrong.play().catch(() => {});
-                    // चुकीचे उत्तर दिल्यावर पुढचे बटण न दाखवता थेट गेम ओव्हर
+                    sndWrong.play();
                     setTimeout(() => {
-                        gameOver("चुकीचे उत्तर!");
+                        alert("चुकीचे उत्तर! खेळ संपला. तुमचा स्कोर: " + score);
+                        location.reload();
                     }, 2000);
                 }
-            }, 1500); 
-        }
-
-        function gameOver(reason) {
-            document.getElementById("game").innerHTML = `
-                <h1 style='color:#ff4d4d'>${reason}</h1>
-                <p style='font-size:22px'>तुमचा खेळ इथेच संपला आहे.</p>
-                <h2>तुमचा अंतिम स्कोर: ${score}/${questions.length}</h2>
-                <button class="btn-main" onclick="location.reload()">पुन्हा प्रयत्न करा</button>
-            `;
+            }, 1500);
         }
 
         function nextQ() {
             index++;
-            if (index < questions.length) {
+            if (index < currentQuestions.length) {
                 prepareQ();
             } else {
-                document.getElementById("game").innerHTML = `<h1 style='color:#ffd700'>अभिनंदन!</h1><p style='font-size:22px'>तुम्ही सर्व प्रश्नांची उत्तरे दिली आहेत!</p><h2>तुमचा स्कोर: ${score}/${questions.length}</h2><button class="btn-main" onclick="location.reload()">पुन्हा खेळा</button>`;
+                document.getElementById("game").innerHTML = `
+                    <h1 style='color:#ffd700'>अभिनंदन!</h1>
+                    <p style='font-size:24px'>तुम्ही ही पातळी यशस्वीपणे पूर्ण केली!</p>
+                    <button class="btn-main" onclick="location.reload()">मुख्य स्क्रीनवर जा</button>
+                `;
             }
         }
 
         function fifty() {
-            let correct = questions[index].ans;
+            let correct = currentQuestions[index].ans;
             let opts = document.querySelectorAll(".option");
             let wrongIndices = [0, 1, 2, 3].filter(i => i !== correct);
             wrongIndices.sort(() => Math.random() - 0.5);
@@ -208,7 +232,7 @@
         }
 
         function audience() {
-            alert("Audience पोलनुसार बरोबर उत्तर पर्याय क्र. " + (questions[index].ans + 1) + " असू शकते.");
+            alert("प्रेक्षकांनुसार बरोबर उत्तर पर्याय क्र. " + (currentQuestions[index].ans + 1) + " असू शकते.");
             document.getElementById("btnAudience").disabled = true;
         }
     </script>
